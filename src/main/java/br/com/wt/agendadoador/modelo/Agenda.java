@@ -1,26 +1,23 @@
 package br.com.wt.agendadoador.modelo;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
 @Entity
-public class Agenda implements Serializable{
-	private static final long serialVersionUID = 1L;
+public class Agenda{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne
 	private Doador doador;
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne
 	private Laboratorio laboratorio;
 	private LocalDateTime date;
 	@Enumerated(EnumType.STRING)

@@ -34,13 +34,13 @@ public class DoadorController {
 		return doador;
 	}
 	
-	@RequestMapping(value = "/doador/",method = RequestMethod.POST ,produces = "application/json")
-	public ResponseEntity<Void> add(@RequestBody Doador doador,UriComponentsBuilder ucBuilder){
+	@RequestMapping(value = "/doador/",method = RequestMethod.POST,produces = "application/json" )
+	public ResponseEntity<Doador> add(@RequestBody Doador doador,UriComponentsBuilder ucBuilder){
 		System.out.println("Criado um novo usuario: " + doador.getNome());
 		doadorRepository.save(doador);
 		HttpHeaders headers = new HttpHeaders();
 		headers.setLocation(ucBuilder.path("/{id}").buildAndExpand(doador.getId()).toUri());
-        return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
+        return new ResponseEntity<Doador>(headers, HttpStatus.CREATED);
 	}
 	
 	@RequestMapping(value = "/doador/update",method = RequestMethod.PUT ,produces = "application/json")
