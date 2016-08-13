@@ -56,7 +56,7 @@ public class DoadorController {
 		doadorRepository.save(doadorBD);
 		HttpHeaders headers = new HttpHeaders();
 		headers.setLocation(ucBuilder.path("/{id}").buildAndExpand(doador.getId()).toUri());
-        return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
+        return new ResponseEntity<Void>(headers, HttpStatus.OK);
 	}
 		
 }
