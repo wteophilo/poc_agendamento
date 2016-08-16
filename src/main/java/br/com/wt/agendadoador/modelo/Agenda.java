@@ -3,8 +3,6 @@ package br.com.wt.agendadoador.modelo;
 import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,9 +18,7 @@ public class Agenda{
 	@OneToOne
 	private Laboratorio laboratorio;
 	private LocalDateTime date;
-	@Enumerated(EnumType.STRING)
-	private StatusAgenda status;
-
+	
 	public Long getId() {
 		return id;
 	}
@@ -55,18 +51,11 @@ public class Agenda{
 		this.date = date;
 	}
 
-	public StatusAgenda getStatus() {
-		return status;
-	}
-
-	public void setStatus(StatusAgenda status) {
-		this.status = status;
-	}
-
+	
 	@Override
 	public String toString() {
 		return "Agenda [id=" + id + ", doador=" + doador + ", laboratorio=" + laboratorio + ", date=" + date
-				+ ", status=" + status + "]";
+				+  "]";
 	}
 
 	@Override
@@ -77,7 +66,6 @@ public class Agenda{
 		result = prime * result + ((doador == null) ? 0 : doador.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((laboratorio == null) ? 0 : laboratorio.hashCode());
-		result = prime * result + ((status == null) ? 0 : status.hashCode());
 		return result;
 	}
 
@@ -110,10 +98,6 @@ public class Agenda{
 				return false;
 		} else if (!laboratorio.equals(other.laboratorio))
 			return false;
-		if (status != other.status)
-			return false;
 		return true;
-	}
-	
-	
+	}	
 }

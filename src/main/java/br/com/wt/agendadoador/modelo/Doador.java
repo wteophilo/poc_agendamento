@@ -5,8 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 @Entity
 public class Doador {
@@ -14,24 +12,14 @@ public class Doador {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@Column
-	@NotNull(message = "Campo nome não pode ser vazio")
-	@Size(min = 4, message = "Campo nome deve conter menos 4 caracteres")
 	private String nome;
 	@Column
-	@NotNull(message = "Campo email não pode ser vazio")
-	@Size(min = 6, message = "Campo nome deve conter menos 6 caracteres")
 	private String email;
 	@Column
-	@NotNull(message = "Campo cpf não pode ser vazio")
-	@Size(min = 10, message = "Campo nome deve conter menos 10 caracteres")
 	private String cpf;
 	@Column
-	@NotNull(message = "Campo cep não pode ser vazio")
-	@Size(min = 8, message = "Campo nome deve conter menos 8 caracteres")
 	private String cep;
 	@Column
-	@NotNull(message = "Campo endereço não pode ser vazio")
-	@Size(min = 4, message = "Campo nome deve conter menos 4 caracteres")
 	private String endereco;
 	
 	
