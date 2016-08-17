@@ -2,21 +2,25 @@ package br.com.wt.agendadoador.modelo;
 
 import java.time.LocalDateTime;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @Entity
 public class Agenda{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@OneToOne
+	@OneToOne(cascade=CascadeType.ALL)
 	private Doador doador;
-	@OneToOne
+	@OneToOne(cascade=CascadeType.ALL)
 	private Laboratorio laboratorio;
+	@JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
 	private LocalDateTime date;
 	
 	public Long getId() {

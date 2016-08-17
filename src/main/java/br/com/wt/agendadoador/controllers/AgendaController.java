@@ -41,7 +41,7 @@ public class AgendaController {
 		System.out.println("Criado um nova data ");
 		HttpHeaders headers = new HttpHeaders();
 		try{
-			adionadaDoador(agenda.getDoador());
+			//adionadaDoador(agenda.getDoador());
 			agendaRepository.save(agenda);
 			headers.setLocation(ucBuilder.path("/{id}").buildAndExpand(agenda.getId()).toUri());
 			return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
