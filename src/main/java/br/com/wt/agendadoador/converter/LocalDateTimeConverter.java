@@ -1,27 +1,22 @@
 package br.com.wt.agendadoador.converter;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
 
-import org.springframework.core.convert.converter.Converter;
-import org.springframework.stereotype.Component;
 
-@Component
-public final class LocalDateTimeConverter implements Converter<String, LocalDateTime> {
+@Converter(autoApply = true)
+public final class LocalDateTimeConverter implements AttributeConverter<LocalDateTime, Timestamp> {
 	 
-    private final DateTimeFormatter formatter;
- 
-    public LocalDateTimeConverter(String dateFormat) {
-        this.formatter = DateTimeFormatter.ofPattern(dateFormat);
-    }
- 
     @Override
-    public LocalDateTime convert(String source) {
-        if (source == null || source.isEmpty()) {
-            return null;
-        }
- 
-        return LocalDateTime.parse(source, formatter);
+    public Timestamp convertToDatabaseColumn(LocalDateTime locDateTime) {
+    	return (locDateTime == null ? null : Timestamp.valueOf(locDateTime));
+    }
+
+    @Override
+    public LocalDateTime convertToEntityAttribute(Timestamp sqlTimestamp) {
+    	return (sqlTimestamp == null ? null : sqlTimestamp.toLocalDateTime());
     }
 }
 
