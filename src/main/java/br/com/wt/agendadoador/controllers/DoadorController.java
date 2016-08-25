@@ -2,6 +2,8 @@ package br.com.wt.agendadoador.controllers;
 
 import java.util.List;
 
+import javax.management.RuntimeErrorException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,42 +23,71 @@ public class DoadorController {
 
 	@Autowired
 	private DoadorRepository doadorRepository;
-	
-	@RequestMapping(value = "/doador/lista", method = RequestMethod.GET,  produces = "application/json")
-	public List<Doador> lista() {
-		List<Doador> doadores = (List<Doador>) doadorRepository.findAll();
-		return doadores;
-	}
-	
-	@RequestMapping(value = "/doador/{id}", method = RequestMethod.GET, produces = "application/json")
-	public Doador getDoador(@PathVariable Long id) {
-		Doador doador = doadorRepository.findOne(id);
-		return doador;
-	}
-	
-	@RequestMapping(value = "/doador/",method = RequestMethod.POST,produces = "application/json" )
-	public ResponseEntity<Doador> add(@RequestBody Doador doador,UriComponentsBuilder ucBuilder){
-		System.out.println("Criado um novo usuario: " + doador.getNome());
-		doadorRepository.save(doador);
+
+	@RequestMapping(value = "/", method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<Void> add(@RequestBody Doador doador, UriComponentsBuilder ucBuilder) {
 		HttpHeaders headers = new HttpHeaders();
-		headers.setLocation(ucBuilder.path("/{id}").buildAndExpand(doador.getId()).toUri());
-        return new ResponseEntity<Doador>(headers, HttpStatus.CREATED);
+		try {
+			doadorRepository.save(doador);
+			headers.setLocation(ucBuilder.path("/{id}").buildAndExpand(doador.getId()).toUri());
+			return new ResponseEntity<Void>(headers, HttpStatus.OK);
+		} catch (RuntimeErrorException e) {
+			System.out.println(e.getMessage());
+			return new ResponseEntity<Void>(headers, HttpStatus.NOT_ACCEPTABLE);
+		}
+
 	}
-	
-	@RequestMapping(value = "/doador/update",method = RequestMethod.PUT ,produces = "application/json")
-	public ResponseEntity<Void> update(@PathVariable long id,@RequestBody Doador doador,UriComponentsBuilder ucBuilder){
-		
+
+	@RequestMapping(value = "/lista", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<List<Doador>> lista() {
+		List<Doador> doadors = (List<Doador>) doadorRepository.findAll();
+		if (doadors == null) {
+			return new ResponseEntity<>(doadors, HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(doadors, HttpStatus.FOUND);
+	}
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<Doador> getDoador(@PathVariable Long id) {
+		Doador doador = doadorRepository.findOne(id);
+		if (doador == null) {
+			return new ResponseEntity<>(doador, HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(doador, HttpStatus.FOUND);
+	}
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
+	public ResponseEntity<Void> update(@PathVariable long id, @RequestBody Doador doador,
+			UriComponentsBuilder ucBuilder) {
+		HttpHeaders headers = new HttpHeaders();
 		Doador doadorBD = doadorRepository.findOne(id);
+
+		if (doadorBD == null) {
+			return new ResponseEntity<Void>(headers, HttpStatus.NOT_FOUND);
+		}
+
 		doadorBD.setCep(doador.getCep());
 		doadorBD.setCpf(doador.getCpf());
 		doadorBD.setEmail(doador.getEmail());
 		doadorBD.setEndereco(doador.getEndereco());
 		doadorBD.setNome(doador.getNome());
 		
+
 		doadorRepository.save(doadorBD);
-		HttpHeaders headers = new HttpHeaders();
 		headers.setLocation(ucBuilder.path("/{id}").buildAndExpand(doador.getId()).toUri());
-        return new ResponseEntity<Void>(headers, HttpStatus.OK);
+		return new ResponseEntity<Void>(headers, HttpStatus.OK);
+
 	}
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "application/json")
+	public ResponseEntity<Void> deletar(@PathVariable Long id) {
+		Doador doador = doadorRepository.findOne(id);
+		if (doador == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 		
+		doadorRepository.delete(doador);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+
 }
