@@ -22,6 +22,7 @@ import br.com.wt.agendadoador.modelo.Agenda;
 import br.com.wt.agendadoador.modelo.AgendaRepository;
 
 @RestController
+@RequestMapping(value = "agenda")
 public class AgendaController {
 	
 	@Autowired
