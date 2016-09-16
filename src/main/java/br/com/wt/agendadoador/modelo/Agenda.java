@@ -2,30 +2,42 @@ package br.com.wt.agendadoador.modelo;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
-public class Agenda{
+public class Agenda {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@OneToOne(cascade=CascadeType.ALL)
+	@OneToOne
+	@JoinColumn(name="doador_id")
+	@NotNull
 	private Doador doador;
-	@OneToOne(cascade=CascadeType.ALL)
+	@Enumerated(EnumType.STRING)
+	@NotBlank
+	private StatusAgenda statusAgenda;
+	@OneToOne
+	@JoinColumn(name="laboratorio_id")
+	@NotNull
 	private Laboratorio laboratorio;
 	@JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
 	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+	@NotNull
 	private LocalDateTime date;
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -58,11 +70,18 @@ public class Agenda{
 		this.date = date;
 	}
 
-	
+	public StatusAgenda getStatusAgenda() {
+		return statusAgenda;
+	}
+
+	public void setStatusAgenda(StatusAgenda statusAgenda) {
+		this.statusAgenda = statusAgenda;
+	}
+
 	@Override
 	public String toString() {
-		return "Agenda [id=" + id + ", doador=" + doador + ", laboratorio=" + laboratorio + ", date=" + date
-				+  "]";
+		return "Agenda [id=" + id + ", doador=" + doador + ", statusAgenda=" + statusAgenda + ", laboratorio="
+				+ laboratorio + ", date=" + date + "]";
 	}
 
 	@Override
@@ -73,6 +92,7 @@ public class Agenda{
 		result = prime * result + ((doador == null) ? 0 : doador.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((laboratorio == null) ? 0 : laboratorio.hashCode());
+		result = prime * result + ((statusAgenda == null) ? 0 : statusAgenda.hashCode());
 		return result;
 	}
 
@@ -105,6 +125,9 @@ public class Agenda{
 				return false;
 		} else if (!laboratorio.equals(other.laboratorio))
 			return false;
+		if (statusAgenda != other.statusAgenda)
+			return false;
 		return true;
-	}	
+	}
+
 }

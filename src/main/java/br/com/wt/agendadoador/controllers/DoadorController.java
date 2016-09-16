@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.wt.agendadoador.modelo.Doador;
-import br.com.wt.agendadoador.modelo.DoadorRepository;
+import br.com.wt.agendadoador.repository.DoadorRepository;
 
 @RestController
 public class DoadorController {
@@ -66,12 +66,7 @@ public class DoadorController {
 			return new ResponseEntity<Void>(headers, HttpStatus.NOT_FOUND);
 		}
 
-		doadorBD.setCep(doador.getCep());
-		doadorBD.setCpf(doador.getCpf());
-		doadorBD.setEmail(doador.getEmail());
-		doadorBD.setEndereco(doador.getEndereco());
-		doadorBD.setNome(doador.getNome());
-		
+		doadorBD =doador;
 
 		doadorRepository.save(doadorBD);
 		headers.setLocation(ucBuilder.path("/{id}").buildAndExpand(doador.getId()).toUri());

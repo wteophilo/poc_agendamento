@@ -1,2 +1,5 @@
 # POC_Agendamento
-POC: Agendamento doação de sangue.
+================
+API: Agendamento doação de sangue:
+*Marcar agendamento
+*Listar agenda por laboratório e região.

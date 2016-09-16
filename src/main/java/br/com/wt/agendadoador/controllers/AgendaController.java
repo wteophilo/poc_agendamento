@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 
 import br.com.wt.agendadoador.modelo.Agenda;
-import br.com.wt.agendadoador.modelo.AgendaRepository;
+import br.com.wt.agendadoador.repository.AgendaRepository;
 
 @RestController
 @RequestMapping(value = "agenda")
