@@ -1,7 +1,5 @@
 package br.com.wt.agendadoador.modelo;
 
-
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -13,21 +11,21 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
-
 @Entity
 public class Agenda {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinColumn(name="doador_id")
+	@JoinColumn(name = "doador_id")
 	private Doador doador;
 	@Enumerated(EnumType.STRING)
 	private StatusAgenda statusAgenda;
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinColumn(name="laboratorio_id")
+	@JoinColumn(name = "laboratorio_id")
 	private Laboratorio laboratorio;
 	private String dataAgendamento;
+	private String numProtocolo;
 
 	public Long getId() {
 		return id;
@@ -69,10 +67,18 @@ public class Agenda {
 		this.statusAgenda = statusAgenda;
 	}
 
+	public String getNumProtocolo() {
+		return numProtocolo;
+	}
+
+	public void setNumProtocolo(String numProtocolo) {
+		this.numProtocolo = numProtocolo;
+	}
+
 	@Override
 	public String toString() {
 		return "Agenda [id=" + id + ", doador=" + doador + ", statusAgenda=" + statusAgenda + ", laboratorio="
-				+ laboratorio + ", dataAgendamento=" + dataAgendamento + "]";
+				+ laboratorio + ", dataAgendamento=" + dataAgendamento + ", numProtocolo=" + numProtocolo + "]";
 	}
 
 	@Override
@@ -83,6 +89,7 @@ public class Agenda {
 		result = prime * result + ((doador == null) ? 0 : doador.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((laboratorio == null) ? 0 : laboratorio.hashCode());
+		result = prime * result + ((numProtocolo == null) ? 0 : numProtocolo.hashCode());
 		result = prime * result + ((statusAgenda == null) ? 0 : statusAgenda.hashCode());
 		return result;
 	}
@@ -115,6 +122,11 @@ public class Agenda {
 			if (other.laboratorio != null)
 				return false;
 		} else if (!laboratorio.equals(other.laboratorio))
+			return false;
+		if (numProtocolo == null) {
+			if (other.numProtocolo != null)
+				return false;
+		} else if (!numProtocolo.equals(other.numProtocolo))
 			return false;
 		if (statusAgenda != other.statusAgenda)
 			return false;
