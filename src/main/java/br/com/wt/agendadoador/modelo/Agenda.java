@@ -1,42 +1,33 @@
 package br.com.wt.agendadoador.modelo;
 
-import java.time.LocalDateTime;
 
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
-import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.NotBlank;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 public class Agenda {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name="doador_id")
-	@NotNull
 	private Doador doador;
 	@Enumerated(EnumType.STRING)
-	@NotBlank
 	private StatusAgenda statusAgenda;
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name="laboratorio_id")
-	@NotNull
 	private Laboratorio laboratorio;
-	@JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
-	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
-	@NotNull
-	private LocalDateTime date;
+	private String dataAgendamento;
 
 	public Long getId() {
 		return id;
@@ -62,12 +53,12 @@ public class Agenda {
 		this.laboratorio = laboratorio;
 	}
 
-	public LocalDateTime getDate() {
-		return date;
+	public String getDataAgendamento() {
+		return dataAgendamento;
 	}
 
-	public void setDate(LocalDateTime date) {
-		this.date = date;
+	public void setDataAgendamento(String dataAgendamento) {
+		this.dataAgendamento = dataAgendamento;
 	}
 
 	public StatusAgenda getStatusAgenda() {
@@ -81,14 +72,14 @@ public class Agenda {
 	@Override
 	public String toString() {
 		return "Agenda [id=" + id + ", doador=" + doador + ", statusAgenda=" + statusAgenda + ", laboratorio="
-				+ laboratorio + ", date=" + date + "]";
+				+ laboratorio + ", dataAgendamento=" + dataAgendamento + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((date == null) ? 0 : date.hashCode());
+		result = prime * result + ((dataAgendamento == null) ? 0 : dataAgendamento.hashCode());
 		result = prime * result + ((doador == null) ? 0 : doador.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((laboratorio == null) ? 0 : laboratorio.hashCode());
@@ -105,10 +96,10 @@ public class Agenda {
 		if (getClass() != obj.getClass())
 			return false;
 		Agenda other = (Agenda) obj;
-		if (date == null) {
-			if (other.date != null)
+		if (dataAgendamento == null) {
+			if (other.dataAgendamento != null)
 				return false;
-		} else if (!date.equals(other.date))
+		} else if (!dataAgendamento.equals(other.dataAgendamento))
 			return false;
 		if (doador == null) {
 			if (other.doador != null)

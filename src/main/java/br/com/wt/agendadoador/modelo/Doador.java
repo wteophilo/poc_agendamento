@@ -1,34 +1,20 @@
 package br.com.wt.agendadoador.modelo;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
-import org.hibernate.validator.constraints.NotBlank;
 
 @Entity
 public class Doador {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@Column
-	@NotBlank
 	private String nome;
-	@Column
-	@NotBlank
 	private String email;
-	@Column
-	@NotBlank
 	private String rg;
-	@Column
-	@NotBlank
 	private String cep;
-	@Column
-	@NotBlank
 	private String endereco;
-	@Column
 	private String complemento;
 
 	public Long getId() {
