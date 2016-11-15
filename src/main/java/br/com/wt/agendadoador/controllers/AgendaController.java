@@ -2,6 +2,8 @@ package br.com.wt.agendadoador.controllers;
 
 import java.util.List;
 
+import javax.management.RuntimeErrorException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,8 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.wt.agendadoador.modelo.Agenda;
+import br.com.wt.agendadoador.modelo.Doador;
 import br.com.wt.agendadoador.modelo.StatusAgenda;
 import br.com.wt.agendadoador.repository.AgendaRepository;
+import br.com.wt.agendadoador.repository.DoadorRepository;
 
 @RestController
 @RequestMapping(value = "agenda")
@@ -23,17 +27,25 @@ public class AgendaController {
 
 	@Autowired
 	private AgendaRepository agendaRepository;
+	@Autowired
+	private DoadorRepository doadorRepository;
+	
 
 	@RequestMapping(value = "/", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<Void> add(@RequestBody Agenda agenda, UriComponentsBuilder ucBuilder) {
 		HttpHeaders headers = new HttpHeaders();
-		if (agenda == null) {
+		try {
+			agenda.setDoador(naoExiste(agenda.getDoador()));
+			agenda.setStatusAgenda(StatusAgenda.EMABERTO);
+			agendaRepository.save(agenda);
+			headers.setLocation(ucBuilder.path("/{id}").buildAndExpand(agenda.getId()).toUri());
+			return new ResponseEntity<Void>(headers, HttpStatus.OK);
+		} catch (RuntimeErrorException e) {
+			System.out.println(e.getMessage());
 			return new ResponseEntity<Void>(headers, HttpStatus.NOT_ACCEPTABLE);
 		}
-		agenda.setStatusAgenda(StatusAgenda.EMABERTO);
-		agendaRepository.save(agenda);
-		headers.setLocation(ucBuilder.path("/{id}").buildAndExpand(agenda.getId()).toUri());
-		return new ResponseEntity<Void>(headers, HttpStatus.OK);
+
+		
 	}
 
 	@RequestMapping(value = "/lista", method = RequestMethod.GET, produces = "application/json")
@@ -42,18 +54,37 @@ public class AgendaController {
 		if (agendas == null) {
 			return new ResponseEntity<>(agendas, HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<>(agendas, HttpStatus.FOUND);
+		return new ResponseEntity<>(agendas, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/buscaPorId/{id}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<Agenda> getAgenda(@PathVariable Long id) {
 		Agenda agenda = agendaRepository.findOne(id);
 		if (agenda == null) {
 			return new ResponseEntity<>(agenda, HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<>(agenda, HttpStatus.FOUND);
+		return new ResponseEntity<>(agenda, HttpStatus.OK);
 	}
-
+	
+	
+	@RequestMapping(value = "/buscaPorData/{data}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<Agenda> buscaPorData(@PathVariable String data) {
+		Agenda agenda = agendaRepository.findBydataAgendamento(data);
+		if (agenda == null) {
+			return new ResponseEntity<>(agenda, HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(agenda, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/buscaPorProtocolo/{protocolo}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<Agenda> buscaPorProtocolo(@PathVariable String protocolo) {
+		Agenda agenda = agendaRepository.findBynumProtocolo(protocolo);
+		if (agenda == null) {
+			return new ResponseEntity<>(agenda, HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(agenda, HttpStatus.OK);
+	}
+	
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
 	public ResponseEntity<Void> update(@PathVariable long id, @RequestBody Agenda agenda,
 			UriComponentsBuilder ucBuilder) {
@@ -82,6 +113,15 @@ public class AgendaController {
 		}
 
 		agendaRepository.delete(agenda);
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+	
+	private Doador naoExiste(Doador doador) {
+		Doador dbDoador = doadorRepository.findByrg(doador.getRg());
+		if (dbDoador.equals(doador)){
+			return dbDoador;
+		}else{
+			return doador;
+		}
 	}
 }

@@ -8,5 +8,6 @@ import br.com.wt.agendadoador.modelo.Agenda;
 
 @RepositoryRestResource
 public interface AgendaRepository extends JpaRepository<Agenda, Long>{ 
-
+	Agenda findBydataAgendamento(String data);
+	Agenda findBynumProtocolo(String protocolo);
 }

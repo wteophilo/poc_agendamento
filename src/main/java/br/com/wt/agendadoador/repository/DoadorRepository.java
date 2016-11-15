@@ -6,4 +6,6 @@ import br.com.wt.agendadoador.modelo.Doador;
 
 @RepositoryRestResource
 public interface DoadorRepository  extends JpaRepository<Doador, Long>{
+	Doador findByrg(String rg);
+	
 }

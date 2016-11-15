@@ -19,6 +19,7 @@ import br.com.wt.agendadoador.modelo.Doador;
 import br.com.wt.agendadoador.repository.DoadorRepository;
 
 @RestController
+@RequestMapping(value = "doador")
 public class DoadorController {
 
 	@Autowired
@@ -28,8 +29,10 @@ public class DoadorController {
 	public ResponseEntity<Void> add(@RequestBody Doador doador, UriComponentsBuilder ucBuilder) {
 		HttpHeaders headers = new HttpHeaders();
 		try {
-			doadorRepository.save(doador);
-			headers.setLocation(ucBuilder.path("/{id}").buildAndExpand(doador.getId()).toUri());
+			if(naoExiste(doador.getRg())){
+				doadorRepository.save(doador);
+				headers.setLocation(ucBuilder.path("/{id}").buildAndExpand(doador.getId()).toUri());
+			}
 			return new ResponseEntity<Void>(headers, HttpStatus.OK);
 		} catch (RuntimeErrorException e) {
 			System.out.println(e.getMessage());
@@ -44,16 +47,27 @@ public class DoadorController {
 		if (doadors == null) {
 			return new ResponseEntity<>(doadors, HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<>(doadors, HttpStatus.FOUND);
+		return new ResponseEntity<>(doadors, HttpStatus.OK);
 	}
+	
+	
+	@RequestMapping(value = "/buscaPorRg/{rg}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<Doador> buscaPorRg(@PathVariable String rg) {
+		Doador doador = doadorRepository.findByrg(rg);
+		if (doador == null) {
+			return new ResponseEntity<>(doador, HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(doador, HttpStatus.OK);
+	}
+	
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/buscaPorId/{id}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<Doador> getDoador(@PathVariable Long id) {
 		Doador doador = doadorRepository.findOne(id);
 		if (doador == null) {
 			return new ResponseEntity<>(doador, HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<>(doador, HttpStatus.FOUND);
+		return new ResponseEntity<>(doador, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
@@ -83,6 +97,15 @@ public class DoadorController {
 		
 		doadorRepository.delete(doador);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+	
+	private boolean naoExiste(String rg) {
+		Doador doador = doadorRepository.findByrg(rg);
+		if (doador == null){
+			return true;
+		}else{
+			return false;
+		}
 	}
 
 }
