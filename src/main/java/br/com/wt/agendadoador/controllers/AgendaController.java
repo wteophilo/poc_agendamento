@@ -17,9 +17,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.wt.agendadoador.modelo.Agenda;
 import br.com.wt.agendadoador.modelo.Doador;
+import br.com.wt.agendadoador.modelo.Laboratorio;
 import br.com.wt.agendadoador.modelo.StatusAgenda;
 import br.com.wt.agendadoador.repository.AgendaRepository;
 import br.com.wt.agendadoador.repository.DoadorRepository;
+import br.com.wt.agendadoador.repository.LaboratorioRepository;
 
 @RestController
 @RequestMapping(value = "agenda")
@@ -29,6 +31,8 @@ public class AgendaController {
 	private AgendaRepository agendaRepository;
 	@Autowired
 	private DoadorRepository doadorRepository;
+	@Autowired
+	private LaboratorioRepository laboratorioRepository;
 	
 
 	@RequestMapping(value = "/", method = RequestMethod.POST, produces = "application/json")
@@ -36,6 +40,7 @@ public class AgendaController {
 		HttpHeaders headers = new HttpHeaders();
 		try {
 			agenda.setDoador(naoExiste(agenda.getDoador()));
+			agenda.setLaboratorio(naoExisteLaboratorio(agenda.getLaboratorio()));
 			agenda.setStatusAgenda(StatusAgenda.EMABERTO);
 			agendaRepository.save(agenda);
 			headers.setLocation(ucBuilder.path("/{id}").buildAndExpand(agenda.getId()).toUri());
@@ -44,8 +49,6 @@ public class AgendaController {
 			System.out.println(e.getMessage());
 			return new ResponseEntity<Void>(headers, HttpStatus.NOT_ACCEPTABLE);
 		}
-
-		
 	}
 
 	@RequestMapping(value = "/lista", method = RequestMethod.GET, produces = "application/json")
@@ -118,10 +121,19 @@ public class AgendaController {
 	
 	private Doador naoExiste(Doador doador) {
 		Doador dbDoador = doadorRepository.findByrg(doador.getRg());
-		if (dbDoador.equals(doador)){
-			return dbDoador;
-		}else{
+		if (dbDoador == null){
 			return doador;
+		}else{
+			return dbDoador;
 		}
+	}
+	
+	private Laboratorio naoExisteLaboratorio(Laboratorio lab){
+		Laboratorio dbLaboratorio = laboratorioRepository.findBycnpj(lab.getCnpj());
+		if (dbLaboratorio == null){
+			return lab;
+		}else{
+			return dbLaboratorio;
+		}	
 	}
 }
