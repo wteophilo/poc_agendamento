@@ -21,7 +21,7 @@ public class Agenda {
 	private Doador doador;
 	@Enumerated(EnumType.STRING)
 	private StatusAgenda statusAgenda;
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
 	@JoinColumn(name = "laboratorio_id")
 	private Laboratorio laboratorio;
 	private String dataAgendamento;

@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.management.RuntimeErrorException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -33,6 +35,7 @@ public class AgendaController {
 	private DoadorRepository doadorRepository;
 	@Autowired
 	private LaboratorioRepository laboratorioRepository;
+	private static final Log LOG = LogFactory.getLog(AgendaController.class);
 	
 
 	@RequestMapping(value = "/", method = RequestMethod.POST, produces = "application/json")
@@ -44,6 +47,7 @@ public class AgendaController {
 			agenda.setStatusAgenda(StatusAgenda.EMABERTO);
 			agendaRepository.save(agenda);
 			headers.setLocation(ucBuilder.path("/{id}").buildAndExpand(agenda.getId()).toUri());
+			LOG.trace("Salvando agenda...");
 			return new ResponseEntity<Void>(headers, HttpStatus.OK);
 		} catch (RuntimeErrorException e) {
 			System.out.println(e.getMessage());
@@ -54,6 +58,7 @@ public class AgendaController {
 	@RequestMapping(value = "/lista", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<List<Agenda>> lista() {
 		List<Agenda> agendas = (List<Agenda>) agendaRepository.findAll();
+		LOG.trace("listando agenda...");
 		if (agendas == null) {
 			return new ResponseEntity<>(agendas, HttpStatus.NOT_FOUND);
 		}
@@ -62,6 +67,7 @@ public class AgendaController {
 
 	@RequestMapping(value = "/buscaPorId/{id}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<Agenda> getAgenda(@PathVariable Long id) {
+		LOG.trace("buscando agenda por id...");
 		Agenda agenda = agendaRepository.findOne(id);
 		if (agenda == null) {
 			return new ResponseEntity<>(agenda, HttpStatus.NOT_FOUND);
@@ -72,6 +78,7 @@ public class AgendaController {
 	
 	@RequestMapping(value = "/buscaPorData/{data}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<Agenda> buscaPorData(@PathVariable String data) {
+		LOG.trace("buscando agenda por data...");
 		Agenda agenda = agendaRepository.findBydataAgendamento(data);
 		if (agenda == null) {
 			return new ResponseEntity<>(agenda, HttpStatus.NOT_FOUND);
@@ -81,14 +88,15 @@ public class AgendaController {
 	
 	@RequestMapping(value = "/buscaPorProtocolo/{protocolo}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<Agenda> buscaPorProtocolo(@PathVariable String protocolo) {
+		LOG.trace("buscando agenda por protocolo...");
 		Agenda agenda = agendaRepository.findBynumProtocolo(protocolo);
 		if (agenda == null) {
-			return new ResponseEntity<>(agenda, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Agenda>(agenda, HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<>(agenda, HttpStatus.OK);
+		return new ResponseEntity<Agenda>(agenda, HttpStatus.OK);
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
+	@RequestMapping(value = "/atualizaPorId/{id}", method = RequestMethod.PUT, produces = "application/json")
 	public ResponseEntity<Void> update(@PathVariable long id, @RequestBody Agenda agenda,
 			UriComponentsBuilder ucBuilder) {
 		HttpHeaders headers = new HttpHeaders();
@@ -108,8 +116,9 @@ public class AgendaController {
 
 	}
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "application/json")
+	@RequestMapping(value = "/deletaPorId/{id}", method = RequestMethod.DELETE, produces = "application/json")
 	public ResponseEntity<Void> deletar(@PathVariable Long id) {
+		LOG.trace("deleta agenda por id...");
 		Agenda agenda = agendaRepository.findOne(id);
 		if (agenda == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);

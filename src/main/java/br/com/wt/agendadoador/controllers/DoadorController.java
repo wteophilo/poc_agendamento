@@ -61,7 +61,7 @@ public class DoadorController {
 	}
 	
 
-	@RequestMapping(value = "/buscaPorId/{id}", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/buscaPorID/{id}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<Doador> getDoador(@PathVariable Long id) {
 		Doador doador = doadorRepository.findOne(id);
 		if (doador == null) {
@@ -70,7 +70,7 @@ public class DoadorController {
 		return new ResponseEntity<>(doador, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
+	@RequestMapping(value = "/atualizaPorID/{id}", method = RequestMethod.PUT, produces = "application/json")
 	public ResponseEntity<Void> update(@PathVariable long id, @RequestBody Doador doador,
 			UriComponentsBuilder ucBuilder) {
 		HttpHeaders headers = new HttpHeaders();
@@ -88,7 +88,7 @@ public class DoadorController {
 
 	}
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "application/json")
+	@RequestMapping(value = "/deletaPorID/{id}", method = RequestMethod.DELETE, produces = "application/json")
 	public ResponseEntity<Void> deletar(@PathVariable Long id) {
 		Doador doador = doadorRepository.findOne(id);
 		if (doador == null) {
