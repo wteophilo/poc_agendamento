@@ -21,10 +21,11 @@ public class Agenda {
 	private Doador doador;
 	@Enumerated(EnumType.STRING)
 	private StatusAgenda statusAgenda;
-	@OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+	@OneToOne(cascade ={CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REMOVE }, fetch = FetchType.EAGER)
 	@JoinColumn(name = "laboratorio_id")
 	private Laboratorio laboratorio;
 	private String dataAgendamento;
+	private String dataConclusao;
 	private String numProtocolo;
 
 	public Long getId() {
@@ -62,6 +63,14 @@ public class Agenda {
 	public StatusAgenda getStatusAgenda() {
 		return statusAgenda;
 	}
+	
+	public String getDataConclusao() {
+		return dataConclusao;
+	}
+
+	public void setDataConclusao(String dataConclusao) {
+		this.dataConclusao = dataConclusao;
+	}
 
 	public void setStatusAgenda(StatusAgenda statusAgenda) {
 		this.statusAgenda = statusAgenda;
@@ -78,7 +87,8 @@ public class Agenda {
 	@Override
 	public String toString() {
 		return "Agenda [id=" + id + ", doador=" + doador + ", statusAgenda=" + statusAgenda + ", laboratorio="
-				+ laboratorio + ", dataAgendamento=" + dataAgendamento + ", numProtocolo=" + numProtocolo + "]";
+				+ laboratorio + ", dataAgendamento=" + dataAgendamento + ", dataConclusao=" + dataConclusao
+				+ ", numProtocolo=" + numProtocolo + "]";
 	}
 
 	@Override
@@ -86,6 +96,7 @@ public class Agenda {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((dataAgendamento == null) ? 0 : dataAgendamento.hashCode());
+		result = prime * result + ((dataConclusao == null) ? 0 : dataConclusao.hashCode());
 		result = prime * result + ((doador == null) ? 0 : doador.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((laboratorio == null) ? 0 : laboratorio.hashCode());
@@ -107,6 +118,11 @@ public class Agenda {
 			if (other.dataAgendamento != null)
 				return false;
 		} else if (!dataAgendamento.equals(other.dataAgendamento))
+			return false;
+		if (dataConclusao == null) {
+			if (other.dataConclusao != null)
+				return false;
+		} else if (!dataConclusao.equals(other.dataConclusao))
 			return false;
 		if (doador == null) {
 			if (other.doador != null)

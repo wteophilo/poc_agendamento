@@ -1,5 +1,7 @@
 package br.com.wt.agendadoador.controllers;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javax.management.RuntimeErrorException;
@@ -75,6 +77,17 @@ public class AgendaController {
 		return new ResponseEntity<>(agenda, HttpStatus.OK);
 	}
 	
+	@RequestMapping(value = "/listaPorLaboratorio/{id}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<List<Agenda>> getAgendasPorLaboratorio(@PathVariable Long id) {
+		LOG.trace("buscando agenda por laboratorio...");
+		Laboratorio lab = laboratorioRepository.findOne(id);
+		List<Agenda> agendas = agendaRepository.findBylaboratorio(lab);
+		if (agendas == null) {
+			return new ResponseEntity<>(agendas, HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(agendas, HttpStatus.OK);
+	}
+	
 	
 	@RequestMapping(value = "/buscaPorData/{data}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<Agenda> buscaPorData(@PathVariable String data) {
@@ -115,7 +128,17 @@ public class AgendaController {
 		return new ResponseEntity<Void>(headers, HttpStatus.OK);
 
 	}
-
+	
+	@RequestMapping(value = "/alteraStatusParaConcluido/{id}", method = RequestMethod.PUT, produces = "application/json")
+	public ResponseEntity<Void> updateByStatus(@PathVariable long id,UriComponentsBuilder ucBuilder) {
+		HttpHeaders headers = new HttpHeaders();
+		Agenda  agenda = agendaRepository.findOne(id);
+		agenda.setStatusAgenda(StatusAgenda.CONCLUIDO);
+		agenda.setDataConclusao(geraData());
+		agendaRepository.save(agenda);
+		return new ResponseEntity<Void>(headers, HttpStatus.OK);
+	}
+	
 	@RequestMapping(value = "/deletaPorId/{id}", method = RequestMethod.DELETE, produces = "application/json")
 	public ResponseEntity<Void> deletar(@PathVariable Long id) {
 		LOG.trace("deleta agenda por id...");
@@ -144,5 +167,11 @@ public class AgendaController {
 		}else{
 			return dbLaboratorio;
 		}	
+	}
+	
+	private String geraData() {
+		LocalDateTime time =  LocalDateTime.now();
+		DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm");
+		return time.format(formatador).toString();
 	}
 }
